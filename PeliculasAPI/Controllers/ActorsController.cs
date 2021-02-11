@@ -33,7 +33,7 @@ namespace PeliculasAPI.Controllers
             return this.mapper.Map<List<ActorDTO>>(actorDB);        
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetActor")]
         public async Task<ActionResult<ActorDTO>> Get(int id)
         {
             var actorDB = await this.context.Actors.FirstOrDefaultAsync(x => x.Id == id);
@@ -48,20 +48,58 @@ namespace PeliculasAPI.Controllers
 
         
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<ActorDTO>> Post([FromBody] ActorCreationDTO actorCreationDto)
         {
+            TryValidateModel(actorCreationDto);
+            var actorDb = this.mapper.Map<Actor>(actorCreationDto);
+            this.context.Actors.Add(actorDb);
+            await this.context.SaveChangesAsync();
+            var actorDto = this.mapper.Map<ActorDTO>(actorDb);
+
+            return new CreatedAtRouteResult("GetActor", new { Id = actorDto.Id }, actorDto);
         }
 
         
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult> Put(int id, [FromBody] ActorUpdateDTO actorDto)
         {
+            try
+            {
+                TryValidateModel(actorDto);
+                var actorDb = this.mapper.Map<Actor>(actorDto);
+                actorDb.Id = id;
+                this.context.Entry(actorDb).State = EntityState.Modified;
+                await this.context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
-        
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
         {
+            try
+            {
+                var actor = this.context.Actors.AnyAsync(x => x.Id == id);
+
+                if (actor == null)
+                {
+                    return NotFound();
+                }
+
+                this.context.Remove(new Actor() { Id = id });
+                await this.context.SaveChangesAsync();
+                return NoContent();
+
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
     }
 }
