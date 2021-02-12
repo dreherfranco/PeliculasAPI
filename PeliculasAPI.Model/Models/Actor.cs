@@ -11,7 +11,7 @@ namespace PeliculasAPI.Model.Models
         [StringLength(120)]
         [Required]
         public string Name { get; set; }
-        public DateTime FechaNacimiento { get; set; }
-        public string Foto { get; set; }
+        public DateTime Birthday { get; set; }
+        public string Photo { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using PeliculasAPI.Helpers.Validations;
+using PeliculasAPI.Helpers.Validations.HelpersValidations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,7 +15,10 @@ namespace PeliculasAPI.DTOs.ActorsDTOs
         [StringLength(120)]
         [Required]
         public string Name { get; set; }
-        public DateTime FechaNacimiento { get; set; }
-        public IFormFile Foto { get; set; }
+        public DateTime Birthday { get; set; }
+
+        [ImageWeight(weightInMegaBytes: 6)]
+        [FileType(groupFileType: GroupFileType.Image)]
+        public IFormFile Photo { get; set; }
     }
 }

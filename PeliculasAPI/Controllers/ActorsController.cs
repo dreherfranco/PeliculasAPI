@@ -29,8 +29,20 @@ namespace PeliculasAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ActorDTO>>> Get()
         {
-            var actorDB = await this.context.Actors.ToListAsync();
-            return this.mapper.Map<List<ActorDTO>>(actorDB);        
+            try
+            {
+                var actorDB = await this.context.Actors.ToListAsync();
+                if(actorDB == null)
+                {
+                    return NotFound();
+                }
+                return this.mapper.Map<List<ActorDTO>>(actorDB);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
+
         }
 
         [HttpGet("{id}", Name = "GetActor")]
@@ -48,7 +60,7 @@ namespace PeliculasAPI.Controllers
 
         
         [HttpPost]
-        public async Task<ActionResult<ActorDTO>> Post([FromBody] ActorCreationDTO actorCreationDto)
+        public async Task<ActionResult<ActorDTO>> Post([FromForm] ActorCreationDTO actorCreationDto)
         {
             TryValidateModel(actorCreationDto);
             var actorDb = this.mapper.Map<Actor>(actorCreationDto);
@@ -61,7 +73,7 @@ namespace PeliculasAPI.Controllers
 
         
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] ActorUpdateDTO actorDto)
+        public async Task<ActionResult> Put(int id, [FromForm] ActorUpdateDTO actorDto)
         {
             try
             {
