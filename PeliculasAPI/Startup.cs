@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PeliculasAPI.FilesManager;
+using PeliculasAPI.FilesManager.Interface;
 using PeliculasAPI.Model.DbConfiguration;
 
 namespace PeliculasAPI
@@ -30,11 +32,13 @@ namespace PeliculasAPI
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
-
+            services.AddTransient<IFileManager, FileManager>();
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("PeliculasAPI"))
             );
             services.AddAutoMapper(typeof(Startup));
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

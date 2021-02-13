@@ -12,7 +12,7 @@ namespace PeliculasAPI.Helpers.Validations
 
         public ImageWeight(int weightInMegaBytes)
         {
-            this.weightInMegaBytes = weightInMegaBytes * 1024 * 1024;
+            this.weightInMegaBytes = weightInMegaBytes;
         }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -29,18 +29,19 @@ namespace PeliculasAPI.Helpers.Validations
                 return ValidationResult.Success;
             }
 
-            if(formFile.Length > WeightInMb(this.weightInMegaBytes))
+            var weightInBytes = this.WeightInBytes(this.weightInMegaBytes);
+            if(formFile.Length > weightInBytes)
             {
-                return new ValidationResult($"The weight of image must be smaller than {this.weightInMegaBytes}MB");
+                return new ValidationResult($"The weight of image must be smaller than {this.weightInMegaBytes}bytes");
             }
 
             return ValidationResult.Success;
 
         }
 
-        private int WeightInMb(int weight)
+        private int WeightInBytes(int weight)
         {
-            return weight * 1024 * 1024;
+            return (weight * 1024 * 1024) ;
         }
     }
 

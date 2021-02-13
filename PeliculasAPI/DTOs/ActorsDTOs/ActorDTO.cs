@@ -19,6 +19,6 @@ namespace PeliculasAPI.DTOs.ActorsDTOs
 
         [ImageWeight(weightInMegaBytes: 6)]
         [FileType(groupFileType: GroupFileType.Image)]
-        public IFormFile Photo { get; set; }
+        public string Photo { get; set; }
     }
 }

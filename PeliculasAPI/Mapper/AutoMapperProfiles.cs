@@ -13,7 +13,8 @@ namespace PeliculasAPI.Mapper
             CreateMap<GenderCreationDTO, Gender>();
 
             CreateMap<Actor, ActorDTO>().ReverseMap();
-            CreateMap<ActorCreationDTO, Actor>();
+            CreateMap<ActorCreationDTO, Actor>()
+                .ForMember(x => x.Photo, options => options.Ignore());
         } 
     }
 }
