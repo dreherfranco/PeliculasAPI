@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DTOs\NewFolder1\**" />
+    <Content Remove="DTOs\NewFolder1\**" />
+    <EmbeddedResource Remove="DTOs\NewFolder1\**" />
+    <None Remove="DTOs\NewFolder1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.12" />
     <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.2" />

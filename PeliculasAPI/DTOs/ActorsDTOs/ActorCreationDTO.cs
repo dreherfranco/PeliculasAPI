@@ -9,13 +9,8 @@ using System.Threading.Tasks;
 
 namespace PeliculasAPI.DTOs.ActorsDTOs
 {
-    public class ActorCreationDTO
+    public class ActorCreationDTO: ActorPatchDTO
     {
-        [StringLength(120)]
-        [Required]
-        public string Name { get; set; }
-        public DateTime Birthday { get; set; }
-
         [ImageWeight(weightInMegaBytes:6)]
         [FileType(groupFileType: GroupFileType.Image)]
         public IFormFile Photo { get; set; }
