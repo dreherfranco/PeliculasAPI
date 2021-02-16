@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PeliculasAPI.DTOs.ActorsDTOs;
 using PeliculasAPI.DTOs.GendersDTOs;
+using PeliculasAPI.DTOs.MoviesDTOs;
 using PeliculasAPI.Model.Models;
 
 namespace PeliculasAPI.Mapper
@@ -16,6 +17,11 @@ namespace PeliculasAPI.Mapper
             CreateMap<Actor, ActorPatchDTO>().ReverseMap();
             CreateMap<ActorCreationDTO, Actor>()
                 .ForMember(x => x.Photo, options => options.Ignore());
+
+            CreateMap<Movie, MovieDTO>().ReverseMap();
+            CreateMap<Movie, MoviePatchDTO>().ReverseMap();
+            CreateMap<MovieCreationDTO, Movie>()
+                .ForMember(x => x.Poster, options => options.Ignore());
         } 
     }
 }

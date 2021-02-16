@@ -4,11 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PeliculasAPI.DTOs.GendersDTOs
+namespace PeliculasAPI.DTOs.MoviesDTOs
 {
-    public class GenderDTO
+    public class MovieUpdateDTO: MovieCreationDTO
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        
     }
 }
