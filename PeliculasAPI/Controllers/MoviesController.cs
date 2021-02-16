@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 
 namespace PeliculasAPI.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class MoviesController : Controller
     {
         private readonly ApplicationDbContext context;
@@ -80,6 +82,7 @@ namespace PeliculasAPI.Controllers
                 }
             }
 
+            this.orderActors(movieDb);
             this.context.Movies.Add(movieDb);
             await this.context.SaveChangesAsync();
             var movieDto = this.mapper.Map<MovieDTO>(movieDb);
@@ -93,7 +96,10 @@ namespace PeliculasAPI.Controllers
             try
             {
                 TryValidateModel(movieDto);
-                var movieDb = await this.context.Actors.FirstOrDefaultAsync(x => x.Id == id);
+                var movieDb = await this.context.Movies
+                    .Include(x=> x.MoviesActors)
+                    .Include(x=>x.MoviesGenders)
+                    .FirstOrDefaultAsync(x => x.Id == id);
 
                 if (movieDb == null) { return NotFound(); }
 
@@ -105,10 +111,11 @@ namespace PeliculasAPI.Controllers
                         await movieDto.Poster.CopyToAsync(memoryStream);
                         var content = memoryStream.ToArray();
                         var extension = Path.GetExtension(movieDto.Poster.FileName);
-                        movieDb.Photo = await this.fileManager.EditFile(content, extension, this.container, movieDb.Photo, movieDto.Poster.ContentType);
+                        movieDb.Poster = await this.fileManager.EditFile(content, extension, this.container, movieDb.Poster, movieDto.Poster.ContentType);
                     }
                 }
 
+                this.orderActors(movieDb);
                 movieDb.Id = id;
                 this.context.Entry(movieDb).State = EntityState.Modified;
                 await this.context.SaveChangesAsync();
@@ -171,5 +178,16 @@ namespace PeliculasAPI.Controllers
                 return BadRequest();
             }
         }
+
+        private void orderActors(Movie movie)
+        {
+            if(movie.MoviesActors != null)
+            {
+                for(int i=0; i < movie.MoviesActors.Count();i++)
+                {
+                    movie.MoviesActors[i].Order = i;
+                }
+            }
+        } 
     }
 }

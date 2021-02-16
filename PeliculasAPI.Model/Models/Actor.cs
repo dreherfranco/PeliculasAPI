@@ -13,5 +13,6 @@ namespace PeliculasAPI.Model.Models
         public string Name { get; set; }
         public DateTime Birthday { get; set; }
         public string Photo { get; set; }
+        public List<MoviesActors> MoviesActors { get; set; }
     }
 }

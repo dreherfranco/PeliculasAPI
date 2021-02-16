@@ -14,6 +14,8 @@ namespace PeliculasAPI.Model.Models
         public bool InTheaters { get; set; }
         public DateTime PremiereDate { get; set; }
         public string Poster { get; set; }
+        public List<MoviesActors> MoviesActors { get; set; }
+        public List<MoviesGenders> MoviesGenders { get; set; }
     }
 
 }
