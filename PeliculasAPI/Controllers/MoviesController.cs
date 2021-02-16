@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace PeliculasAPI.Controllers
@@ -22,7 +23,7 @@ namespace PeliculasAPI.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
-        private readonly string container = "actors";
+        private readonly string container = "movies";
         private readonly IFileManager fileManager;
         public MoviesController(ApplicationDbContext context, IMapper mapper, IFileManager fileManager)
         {
@@ -49,6 +50,69 @@ namespace PeliculasAPI.Controllers
                 return BadRequest(ex);
             }
 
+        }
+
+        [HttpGet("top-five")]
+        public async Task<ActionResult<MovieTopFiveDTO>> GetTopFive()
+        {
+            var top = 5;
+            var today = DateTime.Today;
+            try
+            {       
+                var nextReleases = await context.Movies
+                    .Where(x => x.PremiereDate > today)
+                    .OrderBy(x=>x.PremiereDate)
+                    .Take(top)
+                    .ToListAsync();
+
+                var inTheaters = await context.Movies
+                    .Where(x => x.InTheaters)
+                    .Take(top)
+                    .ToListAsync();
+
+                var topFives = new MovieTopFiveDTO();
+                topFives.InTheaters = this.mapper.Map<List<MovieDTO>>(inTheaters);
+                topFives.NextReleases = this.mapper.Map<List<MovieDTO>>(nextReleases);
+                return topFives;
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+
+        }
+
+        [HttpGet("filter")]
+        public async Task<ActionResult<List<MovieDTO>>> Filter([FromQuery] MovieFilterDTO movieFilterDto)
+        {
+            var moviesDbQueryable = this.context.Movies.AsQueryable();
+            
+            if(movieFilterDto == null) { return BadRequest(); }
+
+            if(movieFilterDto.GenderId != 0)
+            {
+                moviesDbQueryable = moviesDbQueryable.Where(x => x.MoviesGenders.Select(y => y.GenderId).Contains(movieFilterDto.GenderId));
+            }
+            if (movieFilterDto.InTheaters)
+            {
+                moviesDbQueryable = moviesDbQueryable.Where(x => x.InTheaters);
+            }
+            if (movieFilterDto.NextReleases)
+            {
+                var today = DateTime.Today;
+                moviesDbQueryable = moviesDbQueryable.Where(x => x.PremiereDate > today);
+            }
+            if (!string.IsNullOrWhiteSpace(movieFilterDto.Title))
+            {
+                movieFilterDto.Title = movieFilterDto.Title.ToUpper();
+                moviesDbQueryable = moviesDbQueryable.Where(x => x.Title.ToUpper().Contains(movieFilterDto.Title));
+            }
+
+            await HttpContext.InsertParametersPagination(moviesDbQueryable, movieFilterDto.RecordsPerPage);
+            var movies =await moviesDbQueryable.Paginate(movieFilterDto.Pagination).ToListAsync();
+
+            return this.mapper.Map<List<MovieDTO>>(movies);
         }
 
         [HttpGet("{id}", Name = "GetMovie")]

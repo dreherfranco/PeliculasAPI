@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using PeliculasAPI.DTOs.MoviesActorsDTOs;
+using PeliculasAPI.Model.DbConfiguration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,5 +15,6 @@ namespace PeliculasAPI.DTOs.MoviesDTOs
         public bool InTheaters { get; set; }
         public DateTime PremiereDate { get; set; }
         public string Poster { get; set; }
+
     }
 }
