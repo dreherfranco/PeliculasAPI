@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using PeliculasAPI.FilesManager;
 using PeliculasAPI.FilesManager.Interface;
 using PeliculasAPI.Model.DbConfiguration;
+using PeliculasAPI.Model.Models.Interfaces;
 
 namespace PeliculasAPI
 {
@@ -37,7 +38,6 @@ namespace PeliculasAPI
                          );
             services.AddTransient<IFileManager, FileManager>();
             services.AddAutoMapper(typeof(Startup));
-
             
         }
 

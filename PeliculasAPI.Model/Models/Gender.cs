@@ -1,10 +1,11 @@
-﻿using System;
+﻿using PeliculasAPI.Model.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace PeliculasAPI.Model.Models
 {
-    public class Gender
+    public class Gender: IEntity
     {
         public int Id { get; set; }
         [Required]

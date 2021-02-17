@@ -20,5 +20,7 @@ namespace PeliculasAPI.DTOs.PaginationDTOs
         public int GenderId { get; set; }
         public bool InTheaters { get; set; }
         public bool NextReleases { get; set; }
+        public string FieldToSort { get; set; }
+        public bool AscendingOrder { get; set; }
     }
 }

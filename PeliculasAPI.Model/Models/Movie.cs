@@ -1,11 +1,12 @@
-﻿using System;
+﻿using PeliculasAPI.Model.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace PeliculasAPI.Model.Models
 {
-    public class Movie
+    public class Movie : IEntity
     {
         public int Id { get; set; }
         [Required]

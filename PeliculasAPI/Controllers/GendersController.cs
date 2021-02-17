@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PeliculasAPI.Controllers.Base;
 using PeliculasAPI.DTOs.GendersDTOs;
 using PeliculasAPI.Model.DbConfiguration;
 using PeliculasAPI.Model.Models;
@@ -12,105 +13,43 @@ namespace PeliculasAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GendersController : Controller
+    public class GendersController : CustomBaseController
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
-        public GendersController(ApplicationDbContext context, IMapper mapper)
+        public GendersController(ApplicationDbContext context, IMapper mapper):base(context,mapper)
         {
-            this.context = context;
-            this.mapper = mapper;
+            
         }
 
         [HttpGet]
         public async Task<ActionResult<List<GenderDTO>>>Get() 
         {
-            try
-            {
-                var genders = await this.context.Genders.ToListAsync();
-                return mapper.Map<List<GenderDTO>>(genders);
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            return await Get<Gender, GenderDTO>();
         }
 
         [HttpGet("{id:int}",Name = "GetGender")]
         public async Task<ActionResult<GenderDTO>> Get(int id)
         {
-            try
-            {
-                var gender = await this.context.Genders.FirstOrDefaultAsync(x => x.Id == id);
-                if(gender == null)
-                {
-                    return NotFound();
-                }
-                return mapper.Map<GenderDTO>(gender);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            return await Get<Gender, GenderDTO>(id);
         }
 
         [HttpPost]
-        public async Task<ActionResult<GenderDTO>> Post([FromBody]GenderCreationDTO genderCreationDto)
+        public async Task<ActionResult> Post([FromBody]GenderCreationDTO genderCreationDto)
         {
-            try
-            {
-                TryValidateModel(genderCreationDto);
-                var genderDb = this.mapper.Map<Gender>(genderCreationDto);
-                this.context.Add(genderDb);
-                await this.context.SaveChangesAsync();
-                var genderDto = this.mapper.Map<GenderDTO>(genderDb);
-                return new CreatedAtRouteResult("GetGender", new { Id = genderDto.Id }, genderDto);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex);
-            }
+            return await Post<Gender, GenderCreationDTO, GenderDTO>(genderCreationDto, "GetGender" );
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromBody] GenderUpdateDTO genderDto)
         {
-            try
-            {
-                TryValidateModel(genderDto);
-                var genderDb = this.mapper.Map<Gender>(genderDto);
-                genderDb.Id = id;
-                this.context.Entry(genderDb).State = EntityState.Modified;
-                await this.context.SaveChangesAsync();
-                return NoContent();
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex);
-            }
+            return await Put<Gender, GenderUpdateDTO>(id, genderDto);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            try
-            {
-                var gender = this.context.Genders.AnyAsync(x => x.Id == id);
-
-                if (gender == null)
-                {
-                    return NotFound();
-                }
-
-                this.context.Remove(new Gender() { Id = id });
-                await this.context.SaveChangesAsync();
-                return NoContent();
-
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            return await Delete<Gender>(id);
         }
     }
 }
