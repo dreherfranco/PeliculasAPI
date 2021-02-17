@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PeliculasAPI.DTOs.ActorsDTOs;
 using PeliculasAPI.DTOs.GendersDTOs;
+using PeliculasAPI.DTOs.MoviesActorsDTOs;
 using PeliculasAPI.DTOs.MoviesDTOs;
 using PeliculasAPI.Model.Models;
 using System.Collections.Generic;
@@ -25,6 +26,10 @@ namespace PeliculasAPI.Mapper
                 .ForMember(x => x.Poster, options => options.Ignore())
                 .ForMember(x => x.MoviesGenders, options => options.MapFrom(this.MapMoviesGenders))
                 .ForMember(x => x.MoviesActors, options=> options.MapFrom(this.MapMoviesActors));
+
+            CreateMap<Movie, MovieDetailsDTO>()
+                .ForMember(x => x.Actors, options => options.MapFrom(this.MapActorDetails))
+                .ForMember(x => x.Genders, options => options.MapFrom(this.MapGenderDetails));
         } 
 
         private List<MoviesGenders> MapMoviesGenders(MovieCreationDTO movieCreationDto, Movie movie)
@@ -34,7 +39,7 @@ namespace PeliculasAPI.Mapper
 
             foreach(var id in movieCreationDto.GendersIds)
             {
-                result.Add(new MoviesGenders { GenderId = id });
+                result.Add(new MoviesGenders() { GenderId = id });
             }
             return result;
         }
@@ -46,10 +51,40 @@ namespace PeliculasAPI.Mapper
 
             foreach (var actor in movieCreationDto.Actors)
             {
-                result.Add(new MoviesActors { ActorId = actor.ActorId, Character = actor.Character });
+                result.Add(new MoviesActors() { ActorId = actor.ActorId, Character = actor.Character });
             }
             return result;
         }
 
+        private List<MoviesDetailActorsDTO> MapActorDetails(Movie movie, MovieDetailsDTO movieDetailDTO)
+        {
+            var result = new List<MoviesDetailActorsDTO>();
+            if(movie.MoviesActors == null) { return result; }
+
+            foreach(var actor in movie.MoviesActors)
+            {
+                result.Add(new MoviesDetailActorsDTO ()
+                { 
+                    ActorId = actor.ActorId, ActorName = actor.Actor.Name, Character = actor.Character 
+                } );
+            }
+            return result;
+        }
+
+        private List<GenderDTO> MapGenderDetails(Movie movie, MovieDetailsDTO movieDetailDTO)
+        {
+            var result = new List<GenderDTO>();
+            if (movie.MoviesGenders == null) { return result; }
+
+            foreach (var gender in movie.MoviesGenders)
+            {
+                result.Add(new GenderDTO()
+                {
+                    Id = gender.GenderId,
+                    Name = gender.Gender.Name
+                });
+            }
+            return result;
+        }
     }
 }
