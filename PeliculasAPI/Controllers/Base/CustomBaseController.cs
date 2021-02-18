@@ -4,13 +4,11 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PeliculasAPI.DTOs.PaginationDTOs;
-using PeliculasAPI.FilesManager.Interface;
 using PeliculasAPI.Helpers;
 using PeliculasAPI.Model.DbConfiguration;
 using PeliculasAPI.Model.Models.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PeliculasAPI.Controllers.Base

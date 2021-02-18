@@ -20,6 +20,8 @@ namespace PeliculasAPI.Model.DbConfiguration
             modelBuilder.Entity<MoviesGenders>()
                 .HasKey(x => new { x.GenderId, x.MovieId });
 
+            modelBuilder.Entity<MoviesCinemas>()
+                .HasKey(x => new { x.CinemaId, x.MovieId });
 
             SeedData(modelBuilder);
             base.OnModelCreating(modelBuilder);
@@ -89,6 +91,24 @@ namespace PeliculasAPI.Model.DbConfiguration
                     endgame,iw,sonic,emma,wonderWoman
                });
 
+            var granRex = new Cinema()
+            {
+                Id = 1,
+                Name = "Gran Rex"
+            };
+
+            var lunaPark = new Cinema()
+            {
+                Id = 2,
+                Name = "Luna Park"
+            };
+
+            modelBuilder.Entity<Cinema>()
+               .HasData(new List<Cinema>
+               {
+                    granRex, lunaPark
+               });
+
             modelBuilder.Entity<MoviesGenders>()
                .HasData(new List<MoviesGenders>() {
                     new MoviesGenders() { MovieId=endgame.Id,GenderId=adventure.Id},
@@ -111,12 +131,24 @@ namespace PeliculasAPI.Model.DbConfiguration
                     new MoviesActors(){ MovieId=sonic.Id, ActorId=chrisEvans.Id, Character="DR Ivo",Order=2},
                });
 
+            modelBuilder.Entity<MoviesCinemas>()
+                .HasData(new List<MoviesCinemas>()
+                {
+                    new MoviesCinemas(){ MovieId = endgame.Id, CinemaId=granRex.Id},
+                    new MoviesCinemas(){ MovieId = iw.Id, CinemaId=granRex.Id},
+                    new MoviesCinemas(){ MovieId = sonic.Id, CinemaId=granRex.Id},
+                    new MoviesCinemas(){ MovieId = endgame.Id, CinemaId=lunaPark.Id},
+                    new MoviesCinemas(){ MovieId = iw.Id, CinemaId=lunaPark.Id},
+                });
+
         }
 
         public DbSet<Gender> Genders { get; set; }
         public DbSet<Actor> Actors { get; set; }
         public DbSet<Movie> Movies { get; set; }
+        public DbSet<Cinema> Cinema { get; set; }
         public DbSet<MoviesGenders> MoviesGenders { get; set; }
         public DbSet<MoviesActors> MoviesActors { get; set; }
+        public DbSet<MoviesCinemas> MoviesCinemas { get; set; }
     }
 }

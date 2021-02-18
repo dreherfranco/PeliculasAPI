@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PeliculasAPI.DTOs.ActorsDTOs;
+using PeliculasAPI.DTOs.CinemasDTO;
 using PeliculasAPI.DTOs.GendersDTOs;
 using PeliculasAPI.DTOs.MoviesActorsDTOs;
 using PeliculasAPI.DTOs.MoviesDTOs;
@@ -14,6 +15,9 @@ namespace PeliculasAPI.Mapper
         {
             CreateMap<Gender, GenderDTO>().ReverseMap();
             CreateMap<GenderCreationDTO, Gender>();
+
+            CreateMap<Cinema,CinemaDTO>().ReverseMap();
+            CreateMap<CinemaCreationDTO, Cinema>();
 
             CreateMap<Actor, ActorDTO>().ReverseMap();
             CreateMap<Actor, ActorPatchDTO>().ReverseMap();
