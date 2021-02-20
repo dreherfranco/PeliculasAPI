@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,8 +12,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using PeliculasAPI.FilesManager;
 using PeliculasAPI.FilesManager.Interface;
+using PeliculasAPI.Mapper;
 using PeliculasAPI.Model.DbConfiguration;
 using PeliculasAPI.Model.Models.Interfaces;
 
@@ -31,14 +35,28 @@ namespace PeliculasAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("PeliculasAPI"))
-            );
+                options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                sqlServerOptions => sqlServerOptions.UseNetTopologySuite().MigrationsAssembly("PeliculasAPI"))
+            ) ;
+
             services.AddControllers().AddNewtonsoftJson(options =>
                          options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                          );
             services.AddTransient<IFileManager, FileManager>();
             services.AddAutoMapper(typeof(Startup));
-            
+
+            services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
+
+            Func<IServiceProvider, IMapper> p = provider =>
+                            {
+                                return new MapperConfiguration(config =>
+                                {
+                                    var geometryFactory = provider.GetRequiredService<GeometryFactory>();
+                                    config.AddProfile(new AutoMapperProfiles(geometryFactory));
+                                }).CreateMapper();
+                            };
+            services.AddSingleton(p);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using PeliculasAPI.Model.Models;
+using NetTopologySuite.Geometries;
+using NetTopologySuite;
 
 namespace PeliculasAPI.Model.DbConfiguration
 {
     public class ApplicationDbContext: DbContext
     {
-        public ApplicationDbContext(DbContextOptions options): base(options)
+        public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }
 
@@ -91,16 +93,20 @@ namespace PeliculasAPI.Model.DbConfiguration
                     endgame,iw,sonic,emma,wonderWoman
                });
 
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+
             var granRex = new Cinema()
             {
-                Id = 1,
-                Name = "Gran Rex"
+                Id = 5,
+                Ubication = geometryFactory.CreatePoint(new Coordinate(-60.5687, 8.65548)),
+                Name = "prueba geometry factory"
             };
 
             var lunaPark = new Cinema()
             {
-                Id = 2,
-                Name = "Luna Park"
+                Id = 6,
+                Ubication = geometryFactory.CreatePoint(new Coordinate(-50.5687, 85.65548)),
+                Name = "prueba geometry factory 2"
             };
 
             modelBuilder.Entity<Cinema>()

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using PeliculasAPI.Controllers.Base;
 using PeliculasAPI.DTOs.CinemasDTO;
 using PeliculasAPI.Model.DbConfiguration;
@@ -17,10 +19,12 @@ namespace PeliculasAPI.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
-        public CinemaController(ApplicationDbContext context, IMapper mapper): base(context,mapper)
+        private readonly GeometryFactory geometryFactory;
+        public CinemaController(ApplicationDbContext context, IMapper mapper, GeometryFactory geometryFactory) : base(context,mapper)
         {
             this.context = context;
             this.mapper = mapper;
+            this.geometryFactory = geometryFactory;
         }
 
         [HttpGet]
@@ -33,6 +37,27 @@ namespace PeliculasAPI.Controllers
         public async Task<ActionResult<CinemaDTO>> Get(int id)
         {
             return await Get<Cinema, CinemaDTO>(id);
+        }
+
+        [HttpGet("nearby-cinema")]
+        public async Task<ActionResult<List<NearbyCinemaDTO>>> GetNearbyCinema([FromQuery] NearbyCinemaFilterDTO filter)
+        {
+            var userUbication = this.geometryFactory.CreatePoint(new Coordinate(filter.Longitude,filter.Latitude));
+
+            var distanceInMts = filter.DistanceInKms * 1000;
+            var cinemas = await this.context.Cinema
+                .OrderBy(x => x.Ubication.Distance(userUbication))
+                .Where(x => x.Ubication.IsWithinDistance(userUbication, distanceInMts))
+                .Select(x => new NearbyCinemaDTO
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Latitude = x.Ubication.Y,
+                    Longitude = x.Ubication.X,
+                    DistanceInMts = Math.Round(x.Ubication.Distance(userUbication))
+                })
+                .ToListAsync() ;
+            return cinemas;
         }
 
         [HttpPost]

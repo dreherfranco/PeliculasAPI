@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using NetTopologySuite.Geometries;
 using PeliculasAPI.DTOs.ActorsDTOs;
 using PeliculasAPI.DTOs.CinemasDTO;
 using PeliculasAPI.DTOs.GendersDTOs;
@@ -11,19 +12,33 @@ namespace PeliculasAPI.Mapper
 {
     public class AutoMapperProfiles: Profile
     {
-        public AutoMapperProfiles()
+        public AutoMapperProfiles(GeometryFactory geometryFactory)
         {
+            #region Gender
             CreateMap<Gender, GenderDTO>().ReverseMap();
             CreateMap<GenderCreationDTO, Gender>();
+            #endregion Gender
 
-            CreateMap<Cinema,CinemaDTO>().ReverseMap();
-            CreateMap<CinemaCreationDTO, Cinema>();
+            #region Cinema
+            CreateMap<Cinema, CinemaDTO>()
+                .ForMember(x => x.Latitude, x => x.MapFrom(y => y.Ubication.Y))
+                .ForMember(x => x.Longitude, x => x.MapFrom(y => y.Ubication.X));
+            
+            CreateMap<CinemaCreationDTO, Cinema>()
+                .ForMember(x => x.Ubication, x => x.MapFrom(y => geometryFactory.CreatePoint(new Coordinate(y.Longitude, y.Latitude))));
 
+            CreateMap<CinemaDTO, Cinema>()
+               .ForMember(x => x.Ubication, x => x.MapFrom(y => geometryFactory.CreatePoint(new Coordinate(y.Longitude, y.Latitude))));
+            #endregion Cinema
+
+            #region Actor
             CreateMap<Actor, ActorDTO>().ReverseMap();
             CreateMap<Actor, ActorPatchDTO>().ReverseMap();
             CreateMap<ActorCreationDTO, Actor>()
                 .ForMember(x => x.Photo, options => options.Ignore());
+            #endregion Actor
 
+            #region Movie
             CreateMap<Movie, MovieDTO>().ReverseMap();
             CreateMap<Movie, MoviePatchDTO>().ReverseMap();
             CreateMap<MovieCreationDTO, Movie>()
@@ -34,7 +49,8 @@ namespace PeliculasAPI.Mapper
             CreateMap<Movie, MovieDetailsDTO>()
                 .ForMember(x => x.Actors, options => options.MapFrom(this.MapActorDetails))
                 .ForMember(x => x.Genders, options => options.MapFrom(this.MapGenderDetails));
-        } 
+            #endregion Movie
+        }
 
         private List<MoviesGenders> MapMoviesGenders(MovieCreationDTO movieCreationDto, Movie movie)
         {
