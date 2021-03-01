@@ -5,10 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using PeliculasAPI.Model.Models;
 using NetTopologySuite.Geometries;
 using NetTopologySuite;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace PeliculasAPI.Model.DbConfiguration
 {
-    public class ApplicationDbContext: DbContext
+    public class ApplicationDbContext: IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -31,6 +34,45 @@ namespace PeliculasAPI.Model.DbConfiguration
 
         private void SeedData(ModelBuilder modelBuilder)
         {
+            var roleAdminId = "9aae0b6d-d50c-4d0a-9b90-2a6873e3845d";
+            var userAdminId = "5673b8cf-12de-44f6-92ad-fae4a77932ad";
+
+            var rolAdmin = new IdentityRole()
+            {
+                Id = roleAdminId,
+                Name = "Admin",
+                NormalizedName = "Admin"
+            };
+
+            var passwordHasher = new PasswordHasher<IdentityUser>();
+
+            var username = "franco@hotmail.com";
+
+            var usuarioAdmin = new IdentityUser()
+            {
+                Id = userAdminId,
+                UserName = username,
+                NormalizedUserName = username,
+                Email = username,
+                NormalizedEmail = username,
+                PasswordHash = passwordHasher.HashPassword(null, "Aa123456!")
+            };
+
+            /*modelBuilder.Entity<IdentityUser>()
+                .HasData(usuarioAdmin);
+
+            modelBuilder.Entity<IdentityRole>()
+                .HasData(rolAdmin);
+
+            modelBuilder.Entity<IdentityUserClaim<string>>()
+                .HasData(new IdentityUserClaim<string>()
+                {
+                    Id = 1,
+                    ClaimType = ClaimTypes.Role,
+                    UserId = userAdminId,
+                    ClaimValue = "Admin"
+                });
+            */
             var adventure = new Gender() { Id=4,Name="Adventure"};
             var animation = new Gender() { Id = 5, Name = "Animation" };
             var suspense = new Gender() { Id = 6, Name = "Suspense" };
@@ -93,19 +135,19 @@ namespace PeliculasAPI.Model.DbConfiguration
                     endgame,iw,sonic,emma,wonderWoman
                });
 
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-
+           // var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+            
             var granRex = new Cinema()
             {
                 Id = 5,
-                Ubication = geometryFactory.CreatePoint(new Coordinate(-60.5687, 8.65548)),
+               // Ubication = geometryFactory.CreatePoint(new Coordinate(-60.5687, 8.65548)),
                 Name = "prueba geometry factory"
             };
 
             var lunaPark = new Cinema()
             {
                 Id = 6,
-                Ubication = geometryFactory.CreatePoint(new Coordinate(-50.5687, 85.65548)),
+                //Ubication =  geometryFactory.CreatePoint(new Coordinate(-50.5687, 85.65548)),
                 Name = "prueba geometry factory 2"
             };
 

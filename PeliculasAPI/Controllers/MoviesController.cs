@@ -196,7 +196,7 @@ namespace PeliculasAPI.Controllers
                         movieDb.Poster = await this.fileManager.EditFile(content, extension, this.container, movieDb.Poster, movieDto.Poster.ContentType);
                     }
                 }
-
+                
                 this.orderActors(movieDb);
                 movieDb.Id = id;
                 this.context.Entry(movieDb).State = EntityState.Modified;

@@ -39,7 +39,7 @@ namespace PeliculasAPI.Controllers.Base
             }
         }
 
-        protected async Task<ActionResult<List<TDTO>>> Get<TEntity,TDTO>([FromQuery] PaginationDTO paginationDto) where TEntity: class,IEntity
+        protected async Task<ActionResult<List<TDTO>>> Get<TEntity,TDTO>([FromQuery] PaginationDTO paginationDto) where TEntity: class
         {
             try
             {
