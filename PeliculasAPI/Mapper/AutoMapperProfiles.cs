@@ -7,6 +7,8 @@ using PeliculasAPI.DTOs.MoviesActorsDTOs;
 using PeliculasAPI.DTOs.MoviesDTOs;
 using PeliculasAPI.Model.Models;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using PeliculasAPI.DTOs.UsersDTOs;
 
 namespace PeliculasAPI.Mapper
 {
@@ -50,6 +52,10 @@ namespace PeliculasAPI.Mapper
                 .ForMember(x => x.Actors, options => options.MapFrom(this.MapActorDetails))
                 .ForMember(x => x.Genders, options => options.MapFrom(this.MapGenderDetails));
             #endregion Movie
+
+            #region User
+            CreateMap<IdentityUser, UserDTO>();
+            #endregion User
         }
 
         private List<MoviesGenders> MapMoviesGenders(MovieCreationDTO movieCreationDto, Movie movie)

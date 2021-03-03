@@ -11,7 +11,7 @@ using PeliculasAPI.Model.DbConfiguration;
 namespace PeliculasAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210226180028_AdminData")]
+    [Migration("20210303165700_AdminData")]
     partial class AdminData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -27,13 +27,14 @@ namespace PeliculasAPI.Controllers
     public class AccountsController: CustomBaseController
     {
         private readonly ApplicationDbContext context;
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
+        private readonly SignInManager<IdentityUser> signInManager;
         private readonly IConfiguration configuration;
-        public AccountsController(ApplicationDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
+        public AccountsController(ApplicationDbContext context, IMapper mapper, UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
             IConfiguration configuration) :base(context,mapper)
         {
+            this.context = context;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.configuration = configuration;
@@ -42,7 +43,7 @@ namespace PeliculasAPI.Controllers
         [HttpPost("create-user")]
         public async Task<ActionResult<UserToken>> CreateUser([FromBody] User model)
         {
-            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            var user = new IdentityUser { UserName = model.Email, Email = model.Email };
             var result = await this.userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
@@ -61,8 +62,6 @@ namespace PeliculasAPI.Controllers
             var result = await this.signInManager.PasswordSignInAsync(user.Email, user.Password, isPersistent: false, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                var usuario = await this.userManager.FindByEmailAsync(user.Email);
-               
                 return await BuildToken(user);
             }
             else
