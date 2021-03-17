@@ -15,12 +15,12 @@ namespace PeliculasAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CinemaController : CustomBaseController
+    public class CinemasController : CustomBaseController
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly GeometryFactory geometryFactory;
-        public CinemaController(ApplicationDbContext context, IMapper mapper, GeometryFactory geometryFactory) : base(context,mapper)
+        public CinemasController(ApplicationDbContext context, IMapper mapper, GeometryFactory geometryFactory) : base(context,mapper)
         {
             this.context = context;
             this.mapper = mapper;
@@ -45,7 +45,7 @@ namespace PeliculasAPI.Controllers
             var userUbication = this.geometryFactory.CreatePoint(new Coordinate(filter.Longitude,filter.Latitude));
 
             var distanceInMts = filter.DistanceInKms * 1000;
-            var cinemas = await this.context.Cinema
+            var cinemas = await this.context.Cinemas
                 .OrderBy(x => x.Ubication.Distance(userUbication))
                 .Where(x => x.Ubication.IsWithinDistance(userUbication, distanceInMts))
                 .Select(x => new NearbyCinemaDTO

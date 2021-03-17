@@ -194,7 +194,7 @@ namespace PeliculasAPI.Model.DbConfiguration
         public DbSet<Gender> Genders { get; set; }
         public DbSet<Actor> Actors { get; set; }
         public DbSet<Movie> Movies { get; set; }
-        public DbSet<Cinema> Cinema { get; set; }
+        public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<MoviesGenders> MoviesGenders { get; set; }
         public DbSet<MoviesActors> MoviesActors { get; set; }
         public DbSet<MoviesCinemas> MoviesCinemas { get; set; }
