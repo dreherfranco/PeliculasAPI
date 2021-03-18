@@ -25,7 +25,8 @@ namespace PeliculasAPI.Tests.UnitTest
             {
                 var cinemas = new List<Cinema>()
                 {
-                    new Cinema{ Name = "Agora", Ubication = geometryFactory.CreatePoint(new Coordinate(-69.9388777, 18.4839233)) }
+                    new Cinema{ Name = "Agora", Ubication = geometryFactory.CreatePoint(new Coordinate(-69.9388777, 18.4839233)) },
+                    new Cinema{ Name = "Agora 2", Ubication = geometryFactory.CreatePoint(new Coordinate(-69.927275, 18.478026)) }
                 };
 
                 context.AddRange(cinemas);
@@ -45,7 +46,7 @@ namespace PeliculasAPI.Tests.UnitTest
                 var controller = new CinemasController(context, mapper, geometryFactory);
                 var response = await controller.GetNearbyCinema(filter);
                 var value = response.Value;
-                Assert.AreEqual(1, value.Count);
+                Assert.AreEqual(2, value.Count);
             }
         }
     }
