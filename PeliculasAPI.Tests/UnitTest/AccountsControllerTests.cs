@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace PeliculasAPI.Tests.UnitTest
 {
     [TestClass]
-    public class AccountsControllerTest: BaseTest
+    public class AccountsControllerTests: BaseTest
     {
         [TestMethod]
         public async Task CreateUser()

@@ -50,9 +50,9 @@ namespace PeliculasAPI.Controllers
 
         
         [HttpPost]
-        public async Task<ActionResult<ActorDTO>> Post([FromForm] ActorCreationDTO actorCreationDto)
+        public async Task<ActionResult> Post([FromForm] ActorCreationDTO actorCreationDto)
         {
-            TryValidateModel(actorCreationDto);
+            //TryValidateModel(actorCreationDto);
             var actorDb = this.mapper.Map<Actor>(actorCreationDto);
            
             if(actorCreationDto.Photo != null)
