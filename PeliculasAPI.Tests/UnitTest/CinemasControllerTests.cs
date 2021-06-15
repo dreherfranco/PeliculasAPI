@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace PeliculasAPI.Tests.UnitTest
 {
     [TestClass]
-    public class CinemasControllerTest: BaseTest
+    public class CinemasControllerTests: BaseTest
     {
 
         [TestMethod]
